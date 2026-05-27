@@ -31,7 +31,7 @@ app.get('/', (_req, res) => {
 });
 
 // Users routes
-app.get('/api/users/', (_req, res) => {
+app.get('/api/users/', async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json(users);
@@ -40,7 +40,7 @@ app.get('/api/users/', (_req, res) => {
   }
 });
 
-app.post('/api/users/', (_req, res) => {
+app.post('/api/users/', async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save();
@@ -50,7 +50,7 @@ app.post('/api/users/', (_req, res) => {
   }
 });
 
-app.get('/api/users/:id', (_req, res) => {
+app.get('/api/users/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
     if (!user) return res.status(404).json({ error: 'User not found' });
@@ -60,7 +60,7 @@ app.get('/api/users/:id', (_req, res) => {
   }
 });
 
-app.put('/api/users/:id', (_req, res) => {
+app.put('/api/users/:id', async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(user);
@@ -69,7 +69,7 @@ app.put('/api/users/:id', (_req, res) => {
   }
 });
 
-app.delete('/api/users/:id', (_req, res) => {
+app.delete('/api/users/:id', async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted' });
@@ -79,7 +79,7 @@ app.delete('/api/users/:id', (_req, res) => {
 });
 
 // Teams routes
-app.get('/api/teams/', (_req, res) => {
+app.get('/api/teams/', async (req, res) => {
   try {
     const teams = await Team.find().populate('leader').populate('members');
     res.json(teams);
@@ -88,7 +88,7 @@ app.get('/api/teams/', (_req, res) => {
   }
 });
 
-app.post('/api/teams/', (_req, res) => {
+app.post('/api/teams/', async (req, res) => {
   try {
     const team = new Team(req.body);
     await team.save();
@@ -98,7 +98,7 @@ app.post('/api/teams/', (_req, res) => {
   }
 });
 
-app.get('/api/teams/:id', (_req, res) => {
+app.get('/api/teams/:id', async (req, res) => {
   try {
     const team = await Team.findById(req.params.id).populate('leader').populate('members');
     if (!team) return res.status(404).json({ error: 'Team not found' });
@@ -108,7 +108,7 @@ app.get('/api/teams/:id', (_req, res) => {
   }
 });
 
-app.put('/api/teams/:id', (_req, res) => {
+app.put('/api/teams/:id', async (req, res) => {
   try {
     const team = await Team.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(team);
@@ -117,7 +117,7 @@ app.put('/api/teams/:id', (_req, res) => {
   }
 });
 
-app.delete('/api/teams/:id', (_req, res) => {
+app.delete('/api/teams/:id', async (req, res) => {
   try {
     await Team.findByIdAndDelete(req.params.id);
     res.json({ message: 'Team deleted' });
@@ -127,7 +127,7 @@ app.delete('/api/teams/:id', (_req, res) => {
 });
 
 // Activities routes
-app.get('/api/activities/', (_req, res) => {
+app.get('/api/activities/', async (req, res) => {
   try {
     const activities = await Activity.find().populate('userId');
     res.json(activities);
@@ -136,7 +136,7 @@ app.get('/api/activities/', (_req, res) => {
   }
 });
 
-app.post('/api/activities/', (_req, res) => {
+app.post('/api/activities/', async (req, res) => {
   try {
     const activity = new Activity(req.body);
     await activity.save();
@@ -146,7 +146,7 @@ app.post('/api/activities/', (_req, res) => {
   }
 });
 
-app.get('/api/activities/:id', (_req, res) => {
+app.get('/api/activities/:id', async (req, res) => {
   try {
     const activity = await Activity.findById(req.params.id).populate('userId');
     if (!activity) return res.status(404).json({ error: 'Activity not found' });
@@ -156,7 +156,7 @@ app.get('/api/activities/:id', (_req, res) => {
   }
 });
 
-app.put('/api/activities/:id', (_req, res) => {
+app.put('/api/activities/:id', async (req, res) => {
   try {
     const activity = await Activity.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(activity);
@@ -165,7 +165,7 @@ app.put('/api/activities/:id', (_req, res) => {
   }
 });
 
-app.delete('/api/activities/:id', (_req, res) => {
+app.delete('/api/activities/:id', async (req, res) => {
   try {
     await Activity.findByIdAndDelete(req.params.id);
     res.json({ message: 'Activity deleted' });
@@ -175,7 +175,7 @@ app.delete('/api/activities/:id', (_req, res) => {
 });
 
 // Leaderboard routes
-app.get('/api/leaderboard/', (_req, res) => {
+app.get('/api/leaderboard/', async (req, res) => {
   try {
     const leaderboard = await Leaderboard.find().sort({ rank: 1 }).populate('userId').populate('teamId');
     res.json(leaderboard);
@@ -184,7 +184,7 @@ app.get('/api/leaderboard/', (_req, res) => {
   }
 });
 
-app.get('/api/leaderboard/:teamId', (_req, res) => {
+app.get('/api/leaderboard/:teamId', async (req, res) => {
   try {
     const leaderboard = await Leaderboard.find({ teamId: req.params.teamId }).sort({ rank: 1 }).populate('userId');
     res.json(leaderboard);
@@ -194,7 +194,7 @@ app.get('/api/leaderboard/:teamId', (_req, res) => {
 });
 
 // Workouts routes
-app.get('/api/workouts/', (_req, res) => {
+app.get('/api/workouts/', async (req, res) => {
   try {
     const workouts = await Workout.find();
     res.json(workouts);
@@ -203,7 +203,7 @@ app.get('/api/workouts/', (_req, res) => {
   }
 });
 
-app.post('/api/workouts/', (_req, res) => {
+app.post('/api/workouts/', async (req, res) => {
   try {
     const workout = new Workout(req.body);
     await workout.save();
@@ -213,7 +213,7 @@ app.post('/api/workouts/', (_req, res) => {
   }
 });
 
-app.get('/api/workouts/:id', (_req, res) => {
+app.get('/api/workouts/:id', async (req, res) => {
   try {
     const workout = await Workout.findById(req.params.id);
     if (!workout) return res.status(404).json({ error: 'Workout not found' });
@@ -223,7 +223,7 @@ app.get('/api/workouts/:id', (_req, res) => {
   }
 });
 
-app.put('/api/workouts/:id', (_req, res) => {
+app.put('/api/workouts/:id', async (req, res) => {
   try {
     const workout = await Workout.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(workout);
@@ -232,7 +232,7 @@ app.put('/api/workouts/:id', (_req, res) => {
   }
 });
 
-app.delete('/api/workouts/:id', (_req, res) => {
+app.delete('/api/workouts/:id', async (req, res) => {
   try {
     await Workout.findByIdAndDelete(req.params.id);
     res.json({ message: 'Workout deleted' });
