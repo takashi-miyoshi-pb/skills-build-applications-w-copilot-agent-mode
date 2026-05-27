@@ -33,7 +33,7 @@
     "portsAttributes": {
         "5173": {
             "label": "octofit-tracker-frontend",
-            "requireLocalPort": true
+            "requireLocalPort": false
         },
         "8000": {
             "label": "octofit-tracker-api",
