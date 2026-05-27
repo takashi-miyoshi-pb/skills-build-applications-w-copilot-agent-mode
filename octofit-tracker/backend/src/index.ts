@@ -1,5 +1,5 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import { connectDatabase } from './config/database';
 import { User } from './models/User';
 import { Team } from './models/Team';
 import { Activity } from './models/Activity';
@@ -8,7 +8,6 @@ import { Workout } from './models/Workout';
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/octofit_db';
 const CODESPACE_NAME = process.env.CODESPACE_NAME;
 
 // Construct API URL with Codespaces support
@@ -243,8 +242,7 @@ app.delete('/api/workouts/:id', async (req, res) => {
 
 async function start() {
   try {
-    await mongoose.connect(MONGO_URI);
-    console.log('Connected to MongoDB:', MONGO_URI);
+    await connectDatabase();
     const apiUrl = getApiUrl();
     app.listen(PORT, () => {
       console.log(`Backend listening on ${apiUrl}`);

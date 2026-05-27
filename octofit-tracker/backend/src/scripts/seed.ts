@@ -4,8 +4,7 @@ import { Team } from '../models/Team';
 import { Activity } from '../models/Activity';
 import { Leaderboard } from '../models/Leaderboard';
 import { Workout } from '../models/Workout';
-
-const MONGO_URI = 'mongodb://localhost:27017/octofit_db';
+import { MONGO_URI } from '../config/database';
 
 /**
  * Seed the octofit_db database with test data
