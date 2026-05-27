@@ -1,26 +1,25 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ILeaderboard extends Document {
-  userId: Types.ObjectId;
-  teamId: Types.ObjectId;
-  totalCalories: number;
-  totalDuration: number;
-  totalDistance: number;
+  userId: mongoose.Types.ObjectId;
+  teamId?: mongoose.Types.ObjectId;
+  points: number;
   rank: number;
-  createdAt: Date;
+  totalActivities: number;
+  totalDuration: number;
   updatedAt: Date;
 }
 
-const leaderboardSchema = new Schema<ILeaderboard>(
+const LeaderboardSchema: Schema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    teamId: { type: Schema.Types.ObjectId, ref: 'Team', required: true },
-    totalCalories: { type: Number, default: 0 },
-    totalDuration: { type: Number, default: 0 },
-    totalDistance: { type: Number, default: 0 },
-    rank: { type: Number, required: true },
+    teamId: { type: Schema.Types.ObjectId, ref: 'Team' },
+    points: { type: Number, required: true, default: 0 },
+    rank: { type: Number, required: true, default: 0 },
+    totalActivities: { type: Number, required: true, default: 0 },
+    totalDuration: { type: Number, required: true, default: 0 },
   },
   { timestamps: true }
 );
 
-export const Leaderboard = mongoose.model<ILeaderboard>('Leaderboard', leaderboardSchema);
+export const Leaderboard = mongoose.model<ILeaderboard>('Leaderboard', LeaderboardSchema);

@@ -31,48 +31,45 @@ app.get('/', (_req, res) => {
 });
 
 // Users routes
-app.get('/api/users/', async (_req, res) => {
+app.get('/api/users/', (_req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select('-password');
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
 
-app.post('/api/users/', async (req, res) => {
+app.post('/api/users/', (_req, res) => {
   try {
     const user = new User(req.body);
     await user.save();
     res.status(201).json(user);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create user' });
+    res.status(400).json({ error: 'Failed to create user' });
   }
 });
 
-app.get('/api/users/:id', async (req, res) => {
+app.get('/api/users/:id', (_req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      res.status(404).json({ error: 'User not found' });
-      return;
-    }
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
     res.json(user);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch user' });
   }
 });
 
-app.put('/api/users/:id', async (req, res) => {
+app.put('/api/users/:id', (_req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(user);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update user' });
+    res.status(400).json({ error: 'Failed to update user' });
   }
 });
 
-app.delete('/api/users/:id', async (req, res) => {
+app.delete('/api/users/:id', (_req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted' });
@@ -82,48 +79,45 @@ app.delete('/api/users/:id', async (req, res) => {
 });
 
 // Teams routes
-app.get('/api/teams/', async (_req, res) => {
+app.get('/api/teams/', (_req, res) => {
   try {
-    const teams = await Team.find().populate('leaderId').populate('members');
+    const teams = await Team.find().populate('leader').populate('members');
     res.json(teams);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch teams' });
   }
 });
 
-app.post('/api/teams/', async (req, res) => {
+app.post('/api/teams/', (_req, res) => {
   try {
     const team = new Team(req.body);
     await team.save();
     res.status(201).json(team);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create team' });
+    res.status(400).json({ error: 'Failed to create team' });
   }
 });
 
-app.get('/api/teams/:id', async (req, res) => {
+app.get('/api/teams/:id', (_req, res) => {
   try {
-    const team = await Team.findById(req.params.id).populate('leaderId').populate('members');
-    if (!team) {
-      res.status(404).json({ error: 'Team not found' });
-      return;
-    }
+    const team = await Team.findById(req.params.id).populate('leader').populate('members');
+    if (!team) return res.status(404).json({ error: 'Team not found' });
     res.json(team);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch team' });
   }
 });
 
-app.put('/api/teams/:id', async (req, res) => {
+app.put('/api/teams/:id', (_req, res) => {
   try {
     const team = await Team.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(team);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update team' });
+    res.status(400).json({ error: 'Failed to update team' });
   }
 });
 
-app.delete('/api/teams/:id', async (req, res) => {
+app.delete('/api/teams/:id', (_req, res) => {
   try {
     await Team.findByIdAndDelete(req.params.id);
     res.json({ message: 'Team deleted' });
@@ -133,7 +127,7 @@ app.delete('/api/teams/:id', async (req, res) => {
 });
 
 // Activities routes
-app.get('/api/activities/', async (_req, res) => {
+app.get('/api/activities/', (_req, res) => {
   try {
     const activities = await Activity.find().populate('userId');
     res.json(activities);
@@ -142,39 +136,36 @@ app.get('/api/activities/', async (_req, res) => {
   }
 });
 
-app.post('/api/activities/', async (req, res) => {
+app.post('/api/activities/', (_req, res) => {
   try {
     const activity = new Activity(req.body);
     await activity.save();
     res.status(201).json(activity);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create activity' });
+    res.status(400).json({ error: 'Failed to create activity' });
   }
 });
 
-app.get('/api/activities/:id', async (req, res) => {
+app.get('/api/activities/:id', (_req, res) => {
   try {
     const activity = await Activity.findById(req.params.id).populate('userId');
-    if (!activity) {
-      res.status(404).json({ error: 'Activity not found' });
-      return;
-    }
+    if (!activity) return res.status(404).json({ error: 'Activity not found' });
     res.json(activity);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch activity' });
   }
 });
 
-app.put('/api/activities/:id', async (req, res) => {
+app.put('/api/activities/:id', (_req, res) => {
   try {
     const activity = await Activity.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(activity);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update activity' });
+    res.status(400).json({ error: 'Failed to update activity' });
   }
 });
 
-app.delete('/api/activities/:id', async (req, res) => {
+app.delete('/api/activities/:id', (_req, res) => {
   try {
     await Activity.findByIdAndDelete(req.params.id);
     res.json({ message: 'Activity deleted' });
@@ -184,7 +175,7 @@ app.delete('/api/activities/:id', async (req, res) => {
 });
 
 // Leaderboard routes
-app.get('/api/leaderboard/', async (_req, res) => {
+app.get('/api/leaderboard/', (_req, res) => {
   try {
     const leaderboard = await Leaderboard.find().sort({ rank: 1 }).populate('userId').populate('teamId');
     res.json(leaderboard);
@@ -193,61 +184,55 @@ app.get('/api/leaderboard/', async (_req, res) => {
   }
 });
 
-app.get('/api/leaderboard/:teamId', async (req, res) => {
+app.get('/api/leaderboard/:teamId', (_req, res) => {
   try {
-    const leaderboard = await Leaderboard.find({ teamId: req.params.teamId })
-      .sort({ rank: 1 })
-      .populate('userId')
-      .populate('teamId');
+    const leaderboard = await Leaderboard.find({ teamId: req.params.teamId }).sort({ rank: 1 }).populate('userId');
     res.json(leaderboard);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    res.status(500).json({ error: 'Failed to fetch team leaderboard' });
   }
 });
 
 // Workouts routes
-app.get('/api/workouts/', async (_req, res) => {
+app.get('/api/workouts/', (_req, res) => {
   try {
-    const workouts = await Workout.find().populate('userId');
+    const workouts = await Workout.find();
     res.json(workouts);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch workouts' });
   }
 });
 
-app.post('/api/workouts/', async (req, res) => {
+app.post('/api/workouts/', (_req, res) => {
   try {
     const workout = new Workout(req.body);
     await workout.save();
     res.status(201).json(workout);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create workout' });
+    res.status(400).json({ error: 'Failed to create workout' });
   }
 });
 
-app.get('/api/workouts/:id', async (req, res) => {
+app.get('/api/workouts/:id', (_req, res) => {
   try {
-    const workout = await Workout.findById(req.params.id).populate('userId');
-    if (!workout) {
-      res.status(404).json({ error: 'Workout not found' });
-      return;
-    }
+    const workout = await Workout.findById(req.params.id);
+    if (!workout) return res.status(404).json({ error: 'Workout not found' });
     res.json(workout);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch workout' });
   }
 });
 
-app.put('/api/workouts/:id', async (req, res) => {
+app.put('/api/workouts/:id', (_req, res) => {
   try {
     const workout = await Workout.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(workout);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update workout' });
+    res.status(400).json({ error: 'Failed to update workout' });
   }
 });
 
-app.delete('/api/workouts/:id', async (req, res) => {
+app.delete('/api/workouts/:id', (_req, res) => {
   try {
     await Workout.findByIdAndDelete(req.params.id);
     res.json({ message: 'Workout deleted' });

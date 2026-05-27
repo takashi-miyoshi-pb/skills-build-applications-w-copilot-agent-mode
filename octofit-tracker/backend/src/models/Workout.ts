@@ -1,25 +1,25 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IWorkout extends Document {
-  userId: Types.ObjectId;
   name: string;
   description: string;
-  exercises: {
+  duration: number;
+  difficulty: string;
+  exercises: Array<{
     name: string;
     sets: number;
     reps: number;
-  }[];
-  difficulty: 'easy' | 'medium' | 'hard';
-  estimatedDuration: number;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const workoutSchema = new Schema<IWorkout>(
+const WorkoutSchema: Schema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String },
+    duration: { type: Number, required: true },
+    difficulty: { type: String, required: true, enum: ['beginner', 'intermediate', 'advanced'] },
     exercises: [
       {
         name: { type: String, required: true },
@@ -27,10 +27,8 @@ const workoutSchema = new Schema<IWorkout>(
         reps: { type: Number, required: true },
       },
     ],
-    difficulty: { type: String, enum: ['easy', 'medium', 'hard'], required: true },
-    estimatedDuration: { type: Number, required: true },
   },
   { timestamps: true }
 );
 
-export const Workout = mongoose.model<IWorkout>('Workout', workoutSchema);
+export const Workout = mongoose.model<IWorkout>('Workout', WorkoutSchema);

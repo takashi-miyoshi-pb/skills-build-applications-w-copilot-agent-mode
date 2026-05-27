@@ -5,191 +5,204 @@ import { Activity } from '../models/Activity';
 import { Leaderboard } from '../models/Leaderboard';
 import { Workout } from '../models/Workout';
 
+const MONGO_URI = 'mongodb://localhost:27017/octofit_db';
+
 /**
  * Seed the octofit_db database with test data
  */
-
-const MONGO_URI = 'mongodb://localhost:27017/octofit_db';
-
-async function seed() {
+async function seedDatabase() {
   try {
-    console.log('Connecting to MongoDB...');
+    // Connect to MongoDB
     await mongoose.connect(MONGO_URI);
-    console.log('✅ Connected to MongoDB');
+    console.log('Connected to MongoDB:', MONGO_URI);
 
     // Clear existing data
-    console.log('Clearing existing collections...');
+    console.log('Clearing existing data...');
     await User.deleteMany({});
     await Team.deleteMany({});
     await Activity.deleteMany({});
     await Leaderboard.deleteMany({});
     await Workout.deleteMany({});
-    console.log('✅ Collections cleared');
+    console.log('Database cleared');
 
     // Create users
     console.log('Creating users...');
-    const users = await User.insertMany([
+    const users = await User.create([
       {
-        username: 'alice',
-        email: 'alice@example.com',
+        username: 'john_doe',
+        email: 'john@example.com',
         password: 'hashed_password_1',
-        firstName: 'Alice',
-        lastName: 'Johnson',
-        profilePicture: 'https://example.com/alice.jpg',
+        firstName: 'John',
+        lastName: 'Doe',
+        bio: 'Fitness enthusiast',
       },
       {
-        username: 'bob',
-        email: 'bob@example.com',
+        username: 'jane_smith',
+        email: 'jane@example.com',
         password: 'hashed_password_2',
-        firstName: 'Bob',
+        firstName: 'Jane',
         lastName: 'Smith',
-        profilePicture: 'https://example.com/bob.jpg',
+        bio: 'Marathon runner',
       },
       {
-        username: 'charlie',
-        email: 'charlie@example.com',
+        username: 'mike_johnson',
+        email: 'mike@example.com',
         password: 'hashed_password_3',
-        firstName: 'Charlie',
-        lastName: 'Brown',
-        profilePicture: 'https://example.com/charlie.jpg',
+        firstName: 'Mike',
+        lastName: 'Johnson',
+        bio: 'Gym rat',
+      },
+      {
+        username: 'sarah_williams',
+        email: 'sarah@example.com',
+        password: 'hashed_password_4',
+        firstName: 'Sarah',
+        lastName: 'Williams',
+        bio: 'Cyclist',
       },
     ]);
-    console.log(`✅ Created ${users.length} users`);
+    console.log(`Created ${users.length} users`);
 
     // Create teams
     console.log('Creating teams...');
-    const teams = await Team.insertMany([
+    const teams = await Team.create([
       {
-        name: 'Fitness Warriors',
-        description: 'A team dedicated to fitness and wellness',
-        leaderId: users[0]._id,
+        name: 'Team Alpha',
+        description: 'Elite fitness group',
+        leader: users[0]._id,
         members: [users[0]._id, users[1]._id],
       },
       {
-        name: 'Marathon Runners',
-        description: 'Team focused on long-distance running',
-        leaderId: users[2]._id,
-        members: [users[2]._id],
+        name: 'Team Beta',
+        description: 'Casual runners',
+        leader: users[2]._id,
+        members: [users[2]._id, users[3]._id],
       },
     ]);
-    console.log(`✅ Created ${teams.length} teams`);
+    console.log(`Created ${teams.length} teams`);
 
     // Create activities
     console.log('Creating activities...');
-    const activities = await Activity.insertMany([
+    const activities = await Activity.create([
       {
         userId: users[0]._id,
-        type: 'Running',
+        type: 'running',
         duration: 45,
-        calories: 450,
-        distance: 5.2,
-        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-      },
-      {
-        userId: users[0]._id,
-        type: 'Cycling',
-        duration: 60,
+        distance: 7.5,
         calories: 600,
-        distance: 15,
         date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        notes: 'Morning run at the park',
       },
       {
         userId: users[1]._id,
-        type: 'Swimming',
-        duration: 30,
-        calories: 300,
-        distance: 1.5,
+        type: 'cycling',
+        duration: 60,
+        distance: 25,
+        calories: 800,
         date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        notes: 'Trail cycling',
       },
       {
         userId: users[2]._id,
-        type: 'Running',
+        type: 'gym',
         duration: 90,
-        calories: 900,
-        distance: 10.5,
+        calories: 700,
         date: new Date(),
+        notes: 'Upper body workout',
+      },
+      {
+        userId: users[3]._id,
+        type: 'swimming',
+        duration: 50,
+        distance: 2,
+        calories: 500,
+        date: new Date(),
+        notes: 'Pool session',
       },
     ]);
-    console.log(`✅ Created ${activities.length} activities`);
+    console.log(`Created ${activities.length} activities`);
 
     // Create leaderboard entries
     console.log('Creating leaderboard entries...');
-    const leaderboard = await Leaderboard.insertMany([
+    const leaderboard = await Leaderboard.create([
       {
         userId: users[0]._id,
         teamId: teams[0]._id,
-        totalCalories: 1050,
-        totalDuration: 105,
-        totalDistance: 20.7,
+        points: 1200,
         rank: 1,
+        totalActivities: 25,
+        totalDuration: 1500,
       },
       {
         userId: users[1]._id,
         teamId: teams[0]._id,
-        totalCalories: 300,
-        totalDuration: 30,
-        totalDistance: 1.5,
+        points: 1100,
         rank: 2,
+        totalActivities: 22,
+        totalDuration: 1400,
       },
       {
         userId: users[2]._id,
         teamId: teams[1]._id,
-        totalCalories: 900,
-        totalDuration: 90,
-        totalDistance: 10.5,
-        rank: 1,
+        points: 950,
+        rank: 3,
+        totalActivities: 20,
+        totalDuration: 1200,
+      },
+      {
+        userId: users[3]._id,
+        teamId: teams[1]._id,
+        points: 850,
+        rank: 4,
+        totalActivities: 18,
+        totalDuration: 1000,
       },
     ]);
-    console.log(`✅ Created ${leaderboard.length} leaderboard entries`);
+    console.log(`Created ${leaderboard.length} leaderboard entries`);
 
     // Create workouts
     console.log('Creating workouts...');
-    const workouts = await Workout.insertMany([
+    const workouts = await Workout.create([
       {
-        userId: users[0]._id,
-        name: 'Upper Body Strength',
-        description: 'Focus on chest, back, and arms',
+        name: 'Full Body Strength',
+        description: 'Complete full body workout',
+        duration: 60,
+        difficulty: 'intermediate',
         exercises: [
           { name: 'Bench Press', sets: 3, reps: 8 },
-          { name: 'Barbell Rows', sets: 3, reps: 8 },
-          { name: 'Dumbbell Curls', sets: 3, reps: 10 },
+          { name: 'Squats', sets: 3, reps: 8 },
+          { name: 'Deadlifts', sets: 3, reps: 5 },
         ],
-        difficulty: 'medium',
-        estimatedDuration: 60,
       },
       {
-        userId: users[1]._id,
         name: 'Cardio Blast',
-        description: 'High-intensity interval training',
+        description: 'High intensity cardio',
+        duration: 30,
+        difficulty: 'advanced',
         exercises: [
-          { name: 'Burpees', sets: 3, reps: 15 },
-          { name: 'Mountain Climbers', sets: 3, reps: 20 },
-          { name: 'Jump Squats', sets: 3, reps: 15 },
+          { name: 'Running', sets: 1, reps: 30 },
+          { name: 'Jump rope', sets: 5, reps: 30 },
         ],
-        difficulty: 'hard',
-        estimatedDuration: 30,
       },
       {
-        userId: users[2]._id,
         name: 'Beginner Yoga',
-        description: 'Gentle stretching and flexibility',
+        description: 'Gentle yoga for beginners',
+        duration: 45,
+        difficulty: 'beginner',
         exercises: [
-          { name: 'Child Pose', sets: 1, reps: 1 },
-          { name: 'Downward Dog', sets: 1, reps: 1 },
-          { name: 'Warrior Pose', sets: 2, reps: 1 },
+          { name: 'Sun Salutation', sets: 5, reps: 1 },
+          { name: 'Downward Dog', sets: 10, reps: 1 },
         ],
-        difficulty: 'easy',
-        estimatedDuration: 45,
       },
     ]);
-    console.log(`✅ Created ${workouts.length} workouts`);
+    console.log(`Created ${workouts.length} workouts`);
 
-    console.log('\n🎉 Database seeding completed successfully!');
+    console.log('✅ Database seeding completed successfully!');
     process.exit(0);
-  } catch (error) {
-    console.error('❌ Error seeding database:', error);
+  } catch (err) {
+    console.error('❌ Error seeding database:', err);
     process.exit(1);
   }
 }
 
-seed();
+seedDatabase();
